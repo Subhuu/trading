@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 REAL Options Trading System - Live Data</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="trading-system">
+        <!-- Enhanced Header -->
+        <header class="system-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="system-title">🚀 REAL Options Trading System - Live Market Data</h1>
+                    <div class="market-status-bar">
+                        <span class="market-status" id="marketStatus">
+                            <span class="status-dot"></span>
+                            <span id="marketStatusText">CHECKING...</span>
+                        </span>
+                        <span class="current-time" id="currentTime">--:--:-- IST</span>
+                        <span class="data-source" id="dataSource">Loading...</span>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">NIFTY</span>
+                        <span class="stat-value" id="niftyValue">Loading...</span>
+                        <span class="stat-change" id="niftyChange">--%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">BANK NIFTY</span>
+                        <span class="stat-value" id="bankNiftyValue">Loading...</span>
+                        <span class="stat-change" id="bankNiftyChange">--%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">VIX</span>
+                        <span class="stat-value" id="vixValue">Loading...</span>
+                        <span class="stat-change" id="vixChange">--%</span>
+                    </div>
+                    <div class="stat-card connection-card">
+                        <span class="stat-label">API STATUS</span>
+                        <span class="stat-value" id="apiStatus">CONNECTING</span>
+                        <span class="stat-change" id="lastUpdate">Never</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Enhanced Navigation -->
+        <nav class="strategy-tabs">
+            <button class="tab-btn active" data-tab="dashboard">📊 Live Market</button>
+            <button class="tab-btn" data-tab="options">📈 Options Chain</button>
+            <button class="tab-btn" data-tab="analysis">🔍 Analysis</button>
+            <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+        </nav>
+
+        <!-- Main Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <main class="dashboard-grid">
+                <!-- Left Column - Live Data -->
+                <div class="left-column">
+                    <!-- Real Market Status -->
+                    <section class="market-status-section">
+                        <div class="section-header">
+                            <h2>🕒 Market Information</h2>
+                            <div class="refresh-controls">
+                                <button id="refreshData" class="refresh-btn">🔄 Refresh</button>
+                                <button id="autoRefreshToggle" class="auto-btn active">🔁 Auto: ON</button>
+                            </div>
+                        </div>
+                        <div class="market-info-grid">
+                            <div class="info-card">
+                                <div class="info-label">Market Status</div>
+                                <div class="info-value" id="detailedMarketStatus">Checking market hours...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Current Time (IST)</div>
+                                <div class="info-value" id="currentTimeDetailed">--:--:--</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Next Market Open</div>
+                                <div class="info-value" id="nextMarketOpen">Calculating...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Time to Open/Close</div>
+                                <div class="info-value" id="timeToMarket">Calculating...</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Live Stock Data -->
+                    <section class="live-data-section">
+                        <div class="section-header">
+                            <h2>📈 Live Index Data</h2>
+                            <div class="data-controls">
+                                <select id="indexSelector" class="filter-select">
+                                    <option value="NSEI">NIFTY 50</option>
+                                    <option value="NSEBANK">BANK NIFTY</option>
+                                    <option value="NSEIT">NIFTY IT</option>
+                                    <option value="NIFTY_FIN_SERVICE.NS">FIN NIFTY</option>
+                                </select>
+                                <span class="update-indicator" id="updateIndicator">🔴 Stopped</span>
+                            </div>
+                        </div>
+                        <div class="live-data-container">
+                            <div class="price-display">
+                                <div class="main-price">
+                                    <span class="price-label">Current Price</span>
+                                    <span class="price-value" id="currentPrice">Loading...</span>
+                                </div>
+                                <div class="price-change">
+                                    <span class="change-value" id="priceChange">+0.00</span>
+                                    <span class="change-percent" id="priceChangePercent">(+0.00%)</span>
+                                </div>
+                            </div>
+                            <div class="price-stats">
+                                <div class="stat-row">
+                                    <span class="stat-name">Open:</span>
+                                    <span class="stat-val" id="openPrice">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">High:</span>
+                                    <span class="stat-val" id="highPrice">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">Low:</span>
+                                    <span class="stat-val" id="lowPrice">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">Prev Close:</span>
+                                    <span class="stat-val" id="prevClose">--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-name">Volume:</span>
+                                    <span class="stat-val" id="volume">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Price Chart -->
+                    <section class="chart-section">
+                        <div class="section-header">
+                            <h2>📊 Intraday Chart</h2>
+                            <div class="chart-controls">
+                                <select id="chartInterval" class="filter-select">
+                                    <option value="1m">1 Minute</option>
+                                    <option value="5m" selected>5 Minutes</option>
+                                    <option value="15m">15 Minutes</option>
+                                    <option value="1h">1 Hour</option>
+                                </select>
+                                <button id="fullScreen" class="chart-btn">🔍 Full Screen</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="priceChart"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column - Analysis & Tools -->
+                <div class="right-column">
+                    <!-- API Connection Status -->
+                    <section class="connection-section">
+                        <div class="section-header">
+                            <h2>🔗 API Connection</h2>
+                        </div>
+                        <div class="connection-status">
+                            <div class="connection-item">
+                                <span class="connection-label">Yahoo Finance API:</span>
+                                <span class="connection-value" id="yahooStatus">🔴 Disconnected</span>
+                            </div>
+                            <div class="connection-item">
+                                <span class="connection-label">Market Hours API:</span>
+                                <span class="connection-value" id="marketHoursStatus">🔴 Disconnected</span>
+                            </div>
+                            <div class="connection-item">
+                                <span class="connection-label">Last Update:</span>
+                                <span class="connection-value" id="lastDataUpdate">Never</span>
+                            </div>
+                            <div class="connection-item">
+                                <span class="connection-label">Update Frequency:</span>
+                                <span class="connection-value" id="updateFreq">Every 10 seconds</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Quick Stats -->
+                    <section class="quick-stats-section">
+                        <div class="section-header">
+                            <h2>⚡ Quick Analysis</h2>
+                        </div>
+                        <div class="quick-stats">
+                            <div class="stat-card-small">
+                                <div class="stat-title">Day Range</div>
+                                <div class="stat-content" id="dayRange">-- - --</div>
+                            </div>
+                            <div class="stat-card-small">
+                                <div class="stat-title">52W Range</div>
+                                <div class="stat-content" id="yearRange">-- - --</div>
+                            </div>
+                            <div class="stat-card-small">
+                                <div class="stat-title">Market Cap</div>
+                                <div class="stat-content" id="marketCap">--</div>
+                            </div>
+                            <div class="stat-card-small">
+                                <div class="stat-title">P/E Ratio</div>
+                                <div class="stat-content" id="peRatio">--</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Live Events -->
+                    <section class="events-section">
+                        <div class="section-header">
+                            <h2>📡 Live Updates</h2>
+                            <button id="clearLogs" class="clear-btn">Clear</button>
+                        </div>
+                        <div class="events-feed" id="liveEvents">
+                            <div class="event-item">
+                                <span class="event-time">--:--:--</span>
+                                <span class="event-msg">System starting...</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Error/Success Messages -->
+                    <section class="messages-section">
+                        <div class="section-header">
+                            <h2>⚠️ System Messages</h2>
+                        </div>
+                        <div class="messages-container" id="systemMessages">
+                            <div class="message info">
+                                <strong>Info:</strong> Real trading system with live market data integration
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <!-- Options Chain Tab -->
+        <div id="options-tab" class="tab-content">
+            <div class="options-container">
+                <div class="section-header">
+                    <h2>📊 Live Options Chain (Real NSE Data)</h2>
+                    <div class="options-controls">
+                        <select id="optionsUnderlying" class="filter-select">
+                            <option value="NIFTY">NIFTY</option>
+                            <option value="BANKNIFTY">BANK NIFTY</option>
+                            <option value="FINNIFTY">FIN NIFTY</option>
+                        </select>
+                        <select id="optionsExpiry" class="filter-select">
+                            <option value="current">Current Week</option>
+                            <option value="next">Next Week</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                        <button id="loadOptions" class="load-btn">📈 Load Options Chain</button>
+                    </div>
+                </div>
+                <div class="options-disclaimer">
+                    <p><strong>Note:</strong> Options chain data requires NSE API access or premium data subscription. This demo shows the structure and real-time market status detection.</p>
+                </div>
+                <div class="options-table-container" id="optionsTableContainer">
+                    <div class="loading-message">
+                        Click "Load Options Chain" to fetch real options data from NSE
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis-tab" class="tab-content">
+            <div class="analysis-container">
+                <div class="section-header">
+                    <h2>🔍 Technical Analysis</h2>
+                </div>
+                <div class="analysis-grid">
+                    <div class="indicator-card">
+                        <h4>RSI (14)</h4>
+                        <div class="indicator-value" id="rsiValue">Calculating...</div>
+                        <div class="indicator-signal" id="rsiSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <h4>Moving Average</h4>
+                        <div class="indicator-value" id="smaValue">Calculating...</div>
+                        <div class="indicator-signal" id="smaSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <h4>MACD</h4>
+                        <div class="indicator-value" id="macdValue">Calculating...</div>
+                        <div class="indicator-signal" id="macdSignal">--</div>
+                    </div>
+                    <div class="indicator-card">
+                        <h4>Bollinger Bands</h4>
+                        <div class="indicator-value" id="bbValue">Calculating...</div>
+                        <div class="indicator-signal" id="bbSignal">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-container">
+                <div class="section-header">
+                    <h2>⚙️ System Settings</h2>
+                </div>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3>Data Settings</h3>
+                        <div class="setting-item">
+                            <label>Update Interval (seconds):</label>
+                            <select id="updateInterval">
+                                <option value="5">5 seconds</option>
+                                <option value="10" selected>10 seconds</option>
+                                <option value="30">30 seconds</option>
+                                <option value="60">1 minute</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Auto-refresh:</label>
+                            <input type="checkbox" id="autoRefreshSetting" checked>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>Display Settings</h3>
+                        <div class="setting-item">
+                            <label>Show Notifications:</label>
+                            <input type="checkbox" id="showNotifications" checked>
+                        </div>
+                        <div class="setting-item">
+                            <label>Sound Alerts:</label>
+                            <input type="checkbox" id="soundAlerts">
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>API Settings</h3>
+                        <div class="setting-item">
+                            <label>Primary Data Source:</label>
+                            <select id="dataSource">
+                                <option value="yahoo">Yahoo Finance (Free)</option>
+                                <option value="alpha">Alpha Vantage (API Key Required)</option>
+                                <option value="fmp">Financial Modeling Prep (API Key Required)</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>API Key (if required):</label>
+                            <input type="password" id="apiKey" placeholder="Enter API key">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span class="connection-status" id="connectionStatus">🔴 Disconnected</span>
+                <span class="update-frequency">Update: <span id="updateIntervalDisplay">10s</span></span>
+                <span class="data-source">Source: <span id="currentDataSource">Yahoo Finance</span></span>
+                <span class="server-status" id="serverStatus">Client-Side Only</span>
+            </div>
+            <div class="status-right">
+                <span class="last-update" id="lastUpdateFooter">Last update: Never</span>
+                <span class="data-points" id="dataPoints">Data points: 0</span>
+                <span class="errors" id="errorCount">Errors: 0</span>
+                <button id="downloadData" class="export-btn">💾 Export Data</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Include JavaScript file -->
+    <script src="app.js"></script>
+</body>
+</html>
